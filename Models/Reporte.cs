@@ -1,6 +1,6 @@
 namespace ITReportAPI.Models
 {
-    public class Reporte
+    public class Reporte : IBaseClass
     {
         public int Id { get; set; }
         public DateTime FechaDeReporte { get; set; }

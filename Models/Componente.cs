@@ -1,6 +1,6 @@
 namespace ITReportAPI.Models
 {
-    public class Componente
+    public class Componente : IBaseClass
     {
         public int Id { get; set; }
         public string Nombre { get; set; } = null!;

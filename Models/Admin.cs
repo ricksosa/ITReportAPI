@@ -1,6 +1,6 @@
 namespace ITReportAPI.Models
 {
-    public class Admin
+    public class Admin : IBaseClass
     { 
         public int Id { get; set; }
         public string Nombre { get; set; } = null!;
