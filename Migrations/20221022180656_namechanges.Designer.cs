@@ -3,6 +3,7 @@ using System;
 using ITReportAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ITReportAPI.Migrations
 {
     [DbContext(typeof(ITReportContext))]
-    partial class ITReportContextModelSnapshot : ModelSnapshot
+    [Migration("20221022180656_namechanges")]
+    partial class namechanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,19 +75,7 @@ namespace ITReportAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CategoriasReporte");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Nombre = "Reporte"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Nombre = "Solicitud"
-                        });
+                    b.ToTable("CategoriaReporte");
                 });
 
             modelBuilder.Entity("ITReportAPI.Models.Componente", b =>
@@ -145,24 +135,7 @@ namespace ITReportAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EstadosReporte");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Nombre = "Pendiente"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Nombre = "Detenido"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Nombre = "Resuelto"
-                        });
+                    b.ToTable("EstadoReporte");
                 });
 
             modelBuilder.Entity("ITReportAPI.Models.Reporte", b =>
@@ -175,6 +148,7 @@ namespace ITReportAPI.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ComentariosAdmin")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("ComentariosReporte")
@@ -187,16 +161,16 @@ namespace ITReportAPI.Migrations
                     b.Property<int>("EstadoId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("FechaActualizacion")
+                    b.Property<DateTime>("FechaActualizacion")
                         .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("FechaDeReporte")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("SalaId")
+                    b.Property<int>("IncidenteId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TipoDeIncidenteId")
+                    b.Property<int?>("SalaId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -207,9 +181,9 @@ namespace ITReportAPI.Migrations
 
                     b.HasIndex("EstadoId");
 
-                    b.HasIndex("SalaId");
+                    b.HasIndex("IncidenteId");
 
-                    b.HasIndex("TipoDeIncidenteId");
+                    b.HasIndex("SalaId");
 
                     b.ToTable("Reportes");
                 });
@@ -239,44 +213,13 @@ namespace ITReportAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("CategoriaReporteId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoriaReporteId");
-
-                    b.ToTable("TiposDeIncidente");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CategoriaReporteId = 1,
-                            Nombre = "Sin Internet"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CategoriaReporteId = 1,
-                            Nombre = "No prende"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CategoriaReporteId = 2,
-                            Nombre = "Instalar"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CategoriaReporteId = 2,
-                            Nombre = "Optimizar"
-                        });
+                    b.ToTable("TipoDeIncidente");
                 });
 
             modelBuilder.Entity("ITReportAPI.Models.Componente", b =>
@@ -325,15 +268,15 @@ namespace ITReportAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ITReportAPI.Models.TipoDeIncidente", "Incidente")
+                        .WithMany()
+                        .HasForeignKey("IncidenteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ITReportAPI.Models.Sala", null)
                         .WithMany("Reportes")
                         .HasForeignKey("SalaId");
-
-                    b.HasOne("ITReportAPI.Models.TipoDeIncidente", "Incidente")
-                        .WithMany()
-                        .HasForeignKey("TipoDeIncidenteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("Categoria");
 
@@ -342,17 +285,6 @@ namespace ITReportAPI.Migrations
                     b.Navigation("Estado");
 
                     b.Navigation("Incidente");
-                });
-
-            modelBuilder.Entity("ITReportAPI.Models.TipoDeIncidente", b =>
-                {
-                    b.HasOne("ITReportAPI.Models.CategoriaReporte", "CategoriaReporte")
-                        .WithMany()
-                        .HasForeignKey("CategoriaReporteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CategoriaReporte");
                 });
 
             modelBuilder.Entity("ITReportAPI.Models.Computadora", b =>

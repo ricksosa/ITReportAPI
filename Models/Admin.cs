@@ -6,5 +6,6 @@ namespace ITReportAPI.Models
         public string Nombre { get; set; } = null!;
         public string Apellido { get; set; } = null!;
         public string Usuario { get; set; } = null!;
+        public string password { get; set; } = null!;
     }
 }

@@ -3,6 +3,7 @@ using System;
 using ITReportAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ITReportAPI.Migrations
 {
     [DbContext(typeof(ITReportContext))]
-    partial class ITReportContextModelSnapshot : ModelSnapshot
+    [Migration("20221022184220_lookuptables")]
+    partial class lookuptables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -175,6 +177,7 @@ namespace ITReportAPI.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ComentariosAdmin")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("ComentariosReporte")
@@ -187,7 +190,7 @@ namespace ITReportAPI.Migrations
                     b.Property<int>("EstadoId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("FechaActualizacion")
+                    b.Property<DateTime>("FechaActualizacion")
                         .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("FechaDeReporte")
