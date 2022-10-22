@@ -6,6 +6,7 @@ namespace ITReportAPI.Controllers;
 [Route("/api/salas")]
 public class SalaController : ControllerBase
 {
+    [HttpGet]
     public List<Sala> GetAll()
     {
         using (var context = new ITReportContext())

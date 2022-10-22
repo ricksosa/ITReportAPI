@@ -7,6 +7,7 @@ namespace ITReportAPI.Controllers;
 [Route("/api/computadoras")]
 public class ComputadoraController : ControllerBase
 {
+    [HttpGet]
     public List<Computadora> GetAll()
     {
         using (var context = new ITReportContext())
