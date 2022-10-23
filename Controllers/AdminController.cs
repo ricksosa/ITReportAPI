@@ -37,6 +37,9 @@ public class AdminController : ControllerBase
             admin.Apellido = dto.Apellido;
             admin.Usuario = dto.Usuario;
 
+            if(dto.NewPassword != null)
+                admin.password = dto.NewPassword;
+
             context.SaveChanges();
 
             return Ok(admin);
@@ -68,4 +71,5 @@ public class AdminCreateDto
     public string Apellido { get; set; } = null!;
     public string Usuario { get; set; } = null!;
     public string? Password { get; set; } = null!;
+    public string? NewPassword { get; set; } = null!;
 }
