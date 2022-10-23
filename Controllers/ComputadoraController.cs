@@ -52,6 +52,8 @@ public class ComputadoraController : ControllerBase
             .Include(c => c.Reportes)
             .Select(computadora => new ComputadorasSearchResult()
             {
+                Id = computadora.Id,
+                Gabinete = computadora.Gabinete,
                 Solicitudes = computadora.Reportes.Where(r => r.CategoriaId == (int)Categoria.Solicitud).Count(),
                 Reportes = computadora.Reportes.Where(r => r.CategoriaId == (int)Categoria.Reporte).Count(),
                 Componentes = computadora.Components.Count,
@@ -62,6 +64,8 @@ public class ComputadoraController : ControllerBase
     }
     public class ComputadorasSearchResult
     {
+        public int Id { get; set; }
+        public string Gabinete { get; set; } = null!;
         public int Solicitudes { get; set; }
         public int Reportes { get; set; }
         public int Componentes { get; set; }

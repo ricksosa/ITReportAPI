@@ -33,6 +33,8 @@ public class SalaController : ControllerBase
                 .Where(sala => sala.Nombre.ToLower().Contains(search.Value.ToLower()))
                 .Select(sala => new SalaSearchResult()
                 {
+                    Id = sala.Id,
+                    Nombre = sala.Nombre,
                     SolicitudesSala = sala.Reportes.Where(r => r.CategoriaId == (int)Categoria.Solicitud && r.SalaId != null).Count(),
                     ReportesSala = sala.Reportes.Where(r => r.CategoriaId == (int)Categoria.Reporte && r.SalaId != null).Count(),
                     Computadoras = sala.Computadoras.Count(),
@@ -44,6 +46,8 @@ public class SalaController : ControllerBase
     }
     public class SalaSearchResult
     {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = null!;
         public int SolicitudesSala { get; set; }
         public int ReportesSala { get; set; }
         public int Computadoras { get; set; }
