@@ -37,7 +37,7 @@ public class AdminController : ControllerBase
             admin.Apellido = dto.Apellido;
             admin.Usuario = dto.Usuario;
 
-            if(dto.NewPassword != null)
+            if(!string.IsNullOrEmpty(dto.NewPassword))
                 admin.password = dto.NewPassword;
 
             context.SaveChanges();
