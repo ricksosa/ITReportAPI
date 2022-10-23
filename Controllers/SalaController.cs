@@ -43,8 +43,18 @@ public class SalaController : ControllerBase
                 SolicitudesSala = sala.Reportes.Where(r => r.CategoriaId == (int)Categoria.Solicitud && r.SalaId != null).Count(),
                 ReportesSala = sala.Reportes.Where(r => r.CategoriaId == (int)Categoria.Reporte && r.SalaId != null).Count(),
                 Computadoras = sala.Computadoras.Count(),
-                SolicitudesPC = sala.Computadoras.Select(c => c.Reportes.Where(r => r.CategoriaId == (int)Categoria.Solicitud)).Count(),
-                ReportesPC= sala.Computadoras.Select(c => c.Reportes.Where(r => r.CategoriaId == (int)Categoria.Reporte)).Count(),
+                SolicitudesPC = sala.Computadoras
+                    .SelectMany(computadora => computadora.Reportes)
+                    .Where(reporte => reporte.CategoriaId == (int)Categoria.Solicitud)
+                    .Select(r => r.Id)
+                    .Distinct()
+                    .Count(),
+                ReportesPC = sala.Computadoras
+                    .SelectMany(computadora => computadora.Reportes)
+                    .Where(reporte => reporte.CategoriaId == (int)Categoria.Reporte)
+                    .Select(r => r.Id)
+                    .Distinct()
+                    .Count(),
             })
             .ToList();
         }
