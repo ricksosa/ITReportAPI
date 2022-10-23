@@ -25,14 +25,18 @@ public class ReporteController : ControllerBase
             var reporte = context.Reportes.Where(r => r.Id == id).FirstOrDefault();
             if (reporte == null) throw new Exception("Report not found");
 
-            reporte.ComputadoraId = dto.ComputadoraId;
-            reporte.ComentariosReporte = dto.Comentarios;
-            reporte.FechaActualizacion = DateTime.Now;
-            reporte.CategoriaId = dto.CategoriaId;
+            if (dto.ComputadoraId.HasValue)
+                reporte.ComputadoraId = dto.ComputadoraId.Value;
+            if (dto.Comentarios != null)
+                reporte.ComentariosReporte = dto.Comentarios;
+            if (dto.CategoriaId.HasValue)
+                reporte.CategoriaId = dto.CategoriaId.Value;
             if (dto.EstadoId.HasValue)
                 reporte.EstadoId = dto.EstadoId.Value;
             if (dto.ComentariosAdmin != null)
                 reporte.ComentariosAdmin = dto.ComentariosAdmin;
+
+            reporte.FechaActualizacion = DateTime.Now;
 
             context.SaveChanges();
             return reporte;
@@ -84,7 +88,7 @@ public class ReporteController : ControllerBase
         }
     }
     [HttpPost]
-    public Reporte Create([FromBody] ReporteCreateDto dto)
+    public IActionResult Create([FromBody] ReporteCreateDto dto)
     {
         using (var context = new ITReportContext())
         {
@@ -92,29 +96,33 @@ public class ReporteController : ControllerBase
 
             if (dto.SalaId != null) newReporte.SalaId = dto.SalaId;
             else if (dto.ComputadoraId != null) newReporte.ComputadoraId = dto.ComputadoraId;
-            else return new Reporte();
+            else return Ok(newReporte);
 
             var isReporteDuplicado = context.Reportes.Where(reporte =>
                 (
                     (newReporte.SalaId != null && reporte.SalaId == newReporte.SalaId) ||
                     (newReporte.ComputadoraId != null && reporte.ComputadoraId == newReporte.ComputadoraId)
-                )  &&
-                reporte.CategoriaId == (int) Categoria.Reporte &&
+                ) &&
+                reporte.CategoriaId == (int)Categoria.Reporte &&
                 reporte.TipoDeIncidenteId == dto.TipoDeIncidenteId
             ).Count() > 0;
 
-            if(isReporteDuplicado) throw new Exception("Este reporte ya se ha levantado anteriormente");
+            if (isReporteDuplicado) return BadRequest(new { Message = "Este request ya existe" });
 
             newReporte.ComentariosReporte = dto.Comentarios;
             newReporte.FechaDeReporte = DateTime.Now;
-            newReporte.CategoriaId = dto.CategoriaId;
+
+            if (!dto.CategoriaId.HasValue) return BadRequest(new { Message = "No se seleccionó una categoría" });
+            newReporte.CategoriaId = dto.CategoriaId.Value;
+            if (!dto.TipoDeIncidenteId.HasValue) return BadRequest(new { Message = "No se seleccionó una tipo de incidente" });
+            newReporte.TipoDeIncidenteId = dto.TipoDeIncidenteId.Value;
+
             newReporte.EstadoId = (int)EstadoReporte.Nuevo;
-            newReporte.TipoDeIncidenteId = dto.TipoDeIncidenteId;
 
             context.Reportes.Add(newReporte);
 
             context.SaveChanges();
-            return newReporte;
+            return Ok(newReporte);
         }
     }
 }
@@ -129,10 +137,10 @@ public class ReporteFilter
 }
 public class ReporteCreateDto
 {
-    public int CategoriaId { get; set; }
+    public int? CategoriaId { get; set; }
     public int? ComputadoraId { get; set; }
     public int? SalaId { get; set; }
-    public int TipoDeIncidenteId { get; set; }
+    public int? TipoDeIncidenteId { get; set; }
     public string Comentarios { get; set; } = null!;
     public string ComentariosAdmin { get; set; } = null!;
     public int? EstadoId { get; set; } = null!;
