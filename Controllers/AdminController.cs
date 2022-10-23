@@ -31,16 +31,15 @@ public class AdminController : ControllerBase
         {
             var admin = context.Admins.Where(s => s.Id == id).FirstOrDefault();
             if (admin == null) throw new Exception("Admin " + id + " not found");
+            if (admin.password != dto.Password) throw new Exception("Password is incorrect");
 
             admin.Nombre = dto.Nombre;
             admin.Apellido = dto.Apellido;
             admin.Usuario = dto.Usuario;
-            admin.password = dto.Password;
 
             context.SaveChanges();
 
             return admin;
-
         }
     }
     [HttpPost]
@@ -67,5 +66,5 @@ public class AdminCreateDto
     public string Nombre { get; set; } = null!;
     public string Apellido { get; set; } = null!;
     public string Usuario { get; set; } = null!;
-    public string Password { get; set; } = null!;
+    public string? Password { get; set; } = null!;
 }

@@ -11,7 +11,9 @@ namespace ITReportAPI.Models
         public CategoriaReporte Categoria { get; set; } = null!;
         public int CategoriaId { get; set; }
         public Computadora Computadora { get; set; } = null!;
-        public int ComputadoraId { get; set; }
+        public int? ComputadoraId { get; set; }
+        public Sala Sala { get; set; } = null!;
+        public int? SalaId { get; set; }
         public DateTime? FechaActualizacion { get; set; }
         public TipoDeIncidente Incidente { get; set; } = null!; 
         public int TipoDeIncidenteId { get; set; }

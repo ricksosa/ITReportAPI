@@ -3,6 +3,7 @@ using System;
 using ITReportAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ITReportAPI.Migrations
 {
     [DbContext(typeof(ITReportContext))]
-    partial class ITReportContextModelSnapshot : ModelSnapshot
+    [Migration("20221023033035_reportchange")]
+    partial class reportchange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

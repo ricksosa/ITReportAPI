@@ -31,14 +31,20 @@ namespace ITReportAPI.Models
             .HasData(
                 new EstadoReporte() { Id = 1, Nombre = "Pendiente" },
                 new EstadoReporte() { Id = 2, Nombre = "Detenido" },
-                new EstadoReporte() { Id = 3, Nombre = "Resuelto" }
+                new EstadoReporte() { Id = 3, Nombre = "Resuelto" },
+                new EstadoReporte() { Id = 4, Nombre = "Nuevo" }
             );
             modelBuilder.Entity<TipoDeIncidente>()
                 .HasData(
-                    new TipoDeIncidente() { Id = 1, Nombre = "Sin Internet", CategoriaReporteId=(int) Categoria.Reporte},
-                    new TipoDeIncidente() { Id = 2, Nombre = "No prende", CategoriaReporteId=(int) Categoria.Reporte},
-                    new TipoDeIncidente() { Id = 3, Nombre = "Instalar", CategoriaReporteId=(int) Categoria.Solicitud},
-                    new TipoDeIncidente() { Id = 4, Nombre = "Optimizar", CategoriaReporteId=(int) Categoria.Solicitud}
+                    new TipoDeIncidente() { Id = 1, Nombre = "Sin Internet", CategoriaReporteId = (int)Categoria.Reporte },
+                    new TipoDeIncidente() { Id = 2, Nombre = "No prende", CategoriaReporteId = (int)Categoria.Reporte },
+                    new TipoDeIncidente() { Id = 3, Nombre = "Instalar", CategoriaReporteId = (int)Categoria.Solicitud },
+                    new TipoDeIncidente() { Id = 4, Nombre = "Optimizar", CategoriaReporteId = (int)Categoria.Solicitud }
+                );
+            modelBuilder.Entity<CategoriaComputadora>()
+                .HasData(
+                    new CategoriaComputadora() { Id = 1, Nombre = "Software" },
+                    new CategoriaComputadora() { Id = 2, Nombre = "Hardware" }
                 );
         }
 
@@ -49,6 +55,11 @@ namespace ITReportAPI.Models
         public DbSet<CategoriaReporte> CategoriasReporte { get; set; } = null!;
         public DbSet<TipoDeIncidente> TiposDeIncidente { get; set; } = null!;
         public DbSet<EstadoReporte> EstadosReporte { get; set; } = null!;
+    }
+    public enum CategoriaComponent
+    {
+        Software = 1,
+        Hardware = 2
     }
     public enum Categoria
     {

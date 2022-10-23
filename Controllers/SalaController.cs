@@ -20,19 +20,36 @@ public class SalaController : ControllerBase
         using (var context = new ITReportContext())
         {
             var sala = context.Salas.Where(s => s.Id == id).FirstOrDefault();
-            if(sala == null) throw new Exception("Sala not found");
+            if (sala == null) throw new Exception("Sala not found");
             return sala;
         }
     }
     [HttpPost("search")]
-    public List<Sala> Search([FromBody] SearchDto search)
+    public List<SalaSearchResult> Search([FromBody] SearchDto search)
     {
         using (var context = new ITReportContext())
         {
             return context.Salas
-                .Where(s => s.Nombre.ToLower().Contains(search.Value.ToLower()))
+                .Where(sala => sala.Nombre.ToLower().Contains(search.Value.ToLower()))
+                .Select(sala => new SalaSearchResult()
+                {
+                    SolicitudesSala = sala.Reportes.Where(r => r.CategoriaId == (int)Categoria.Solicitud && r.SalaId != null).Count(),
+                    ReportesSala = sala.Reportes.Where(r => r.CategoriaId == (int)Categoria.Reporte && r.SalaId != null).Count(),
+                    Computadoras = sala.Computadoras.Count(),
+                    SolicitudesPC = sala.Reportes.Where(r => r.CategoriaId == (int)Categoria.Solicitud && r.ComputadoraId != null).Count(),
+                    ReportesPC = sala.Reportes.Where(r => r.CategoriaId == (int)Categoria.Reporte && r.ComputadoraId != null).Count(),
+                })
                 .ToList();
         }
+    }
+    public class SalaSearchResult
+    {
+        public int SolicitudesSala { get; set; }
+        public int ReportesSala { get; set; }
+        public int Computadoras { get; set; }
+        public int SolicitudesPC { get; set; }
+        public int ReportesPC { get; set; }
+
     }
     [HttpPut("{id}")]
     public Sala Update(int id, [FromBody] SalaCreateDto dto)
@@ -72,7 +89,7 @@ public class SalaCreateDto
     public string Nombre { get; set; } = null!;
     public string Edificio { get; set; } = null!;
 }
-public class SearchDto 
+public class SearchDto
 {
     public string Value { get; set; } = null!;
 }

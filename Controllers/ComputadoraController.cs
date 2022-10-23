@@ -1,6 +1,7 @@
 using System.Net;
 using ITReportAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ITReportAPI.Controllers;
 [ApiController]
@@ -18,10 +19,10 @@ public class ComputadoraController : ControllerBase
     [HttpGet("{id}")]
     public Computadora GetById(int id)
     {
-        using(var context = new ITReportContext())
+        using (var context = new ITReportContext())
         {
             var computadora = context.Computadoras.Where(c => c.Id == id).FirstOrDefault();
-            if(computadora == null) throw new Exception("Computadora not found");
+            if (computadora == null) throw new Exception("Computadora not found");
             return computadora;
         }
     }
@@ -42,12 +43,30 @@ public class ComputadoraController : ControllerBase
         }
     }
     [HttpPost("search")]
-    public List<Computadora> Search(SearchDto search)
+    public List<ComputadorasSearchResult> Search(SearchDto search)
     {
         using (var context = new ITReportContext())
         {
-            return context.Computadoras.Where(c => c.Gabinete.ToLower().Contains(search.Value.ToLower())).ToList();
+            return context.Computadoras.Where(c => c.Gabinete.ToLower().Contains(search.Value.ToLower()))
+            .Include(c => c.Components)
+            .Include(c => c.Reportes)
+            .Select(computadora => new ComputadorasSearchResult()
+            {
+                Solicitudes = computadora.Reportes.Where(r => r.CategoriaId == (int)Categoria.Solicitud).Count(),
+                Reportes = computadora.Reportes.Where(r => r.CategoriaId == (int)Categoria.Reporte).Count(),
+                Componentes = computadora.Components.Count,
+                Software = computadora.Components.Where(c => c.CategoriaId == (int)CategoriaComponent.Software).Count(),
+                Hardware = computadora.Components.Where(c => c.CategoriaId == (int)CategoriaComponent.Hardware).Count(),
+            }).ToList();
         }
+    }
+    public class ComputadorasSearchResult
+    {
+        public int Solicitudes { get; set; }
+        public int Reportes { get; set; }
+        public int Componentes { get; set; }
+        public int Software { get; set; }
+        public int Hardware { get; set; }
     }
     [HttpPost]
     public Computadora Create([FromBody] ComputadoraCreateDTO dto)

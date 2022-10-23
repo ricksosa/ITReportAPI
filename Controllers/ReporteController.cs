@@ -50,6 +50,7 @@ public class ReporteController : ControllerBase
             if (filtro?.EstadoId != null) query = query.Where(r => r.EstadoId == filtro.EstadoId);
             if (filtro?.SalaId != null) query = query.Where(r => r.Computadora.SalaId == filtro.SalaId);
             if (filtro?.TipoDeIncidenteId != null) query = query.Where(r => r.TipoDeIncidenteId == filtro.TipoDeIncidenteId);
+            if (filtro?.IgnorarEstadoId != null) query.Where(r => r.EstadoId != filtro.IgnorarEstadoId);
 
             return query
                 .Include(r => r.Categoria)
@@ -89,11 +90,25 @@ public class ReporteController : ControllerBase
         {
             var newReporte = new Reporte();
 
-            newReporte.ComputadoraId = dto.ComputadoraId;
+            if (dto.SalaId != null) newReporte.SalaId = dto.SalaId;
+            else if (dto.ComputadoraId != null) newReporte.ComputadoraId = dto.ComputadoraId;
+            else throw new Exception("No SalaId or ComputadoraId was specified");
+
+            var isReporteDuplicado = context.Reportes.Where(reporte =>
+                (
+                    (newReporte.SalaId != null && reporte.SalaId == newReporte.SalaId) ||
+                    (newReporte.ComputadoraId != null && reporte.ComputadoraId == newReporte.ComputadoraId)
+                )  &&
+                reporte.CategoriaId == (int) Categoria.Reporte &&
+                reporte.TipoDeIncidenteId == dto.TipoDeIncidenteId
+            ).Count() > 0;
+
+            if(isReporteDuplicado) throw new Exception("Este reporte ya se ha levantado anteriormente");
+
             newReporte.ComentariosReporte = dto.Comentarios;
             newReporte.FechaDeReporte = DateTime.Now;
             newReporte.CategoriaId = dto.CategoriaId;
-            newReporte.EstadoId = (int)EstadoReporte.Pendiente;
+            newReporte.EstadoId = (int)EstadoReporte.Nuevo;
             newReporte.TipoDeIncidenteId = dto.TipoDeIncidenteId;
 
             context.Reportes.Add(newReporte);
@@ -110,11 +125,13 @@ public class ReporteFilter
     public int? CategoriaId { get; set; } = null!;
     public int? ComputadoraId { get; set; } = null!;
     public int? TipoDeIncidenteId { get; set; } = null!;
+    public int? IgnorarEstadoId { get; set; } = null!;
 }
 public class ReporteCreateDto
 {
     public int CategoriaId { get; set; }
-    public int ComputadoraId { get; set; }
+    public int? ComputadoraId { get; set; }
+    public int? SalaId { get; set; }
     public int TipoDeIncidenteId { get; set; }
     public string Comentarios { get; set; } = null!;
     public string ComentariosAdmin { get; set; } = null!;
@@ -124,6 +141,7 @@ public enum EstadoReporte
 {
     Pendiente = 1,
     Detenido = 2,
-    Resuelto = 3
+    Resuelto = 3,
+    Nuevo = 4
 
 }

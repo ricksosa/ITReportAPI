@@ -3,6 +3,7 @@ using System;
 using ITReportAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ITReportAPI.Migrations
 {
     [DbContext(typeof(ITReportContext))]
-    partial class ITReportContextModelSnapshot : ModelSnapshot
+    [Migration("20221023031628_updatexl")]
+    partial class updatexl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -193,7 +195,7 @@ namespace ITReportAPI.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("ComputadoraId")
+                    b.Property<int>("ComputadoraId")
                         .HasColumnType("int");
 
                     b.Property<int>("EstadoId")
@@ -327,7 +329,9 @@ namespace ITReportAPI.Migrations
 
                     b.HasOne("ITReportAPI.Models.Computadora", "Computadora")
                         .WithMany("Reportes")
-                        .HasForeignKey("ComputadoraId");
+                        .HasForeignKey("ComputadoraId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ITReportAPI.Models.EstadoReporte", "Estado")
                         .WithMany()
@@ -335,7 +339,7 @@ namespace ITReportAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ITReportAPI.Models.Sala", "Sala")
+                    b.HasOne("ITReportAPI.Models.Sala", null)
                         .WithMany("Reportes")
                         .HasForeignKey("SalaId");
 
@@ -352,8 +356,6 @@ namespace ITReportAPI.Migrations
                     b.Navigation("Estado");
 
                     b.Navigation("Incidente");
-
-                    b.Navigation("Sala");
                 });
 
             modelBuilder.Entity("ITReportAPI.Models.TipoDeIncidente", b =>
