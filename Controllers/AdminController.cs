@@ -30,8 +30,8 @@ public class AdminController : ControllerBase
         using (var context = new ITReportContext())
         {
             var admin = context.Admins.Where(s => s.Id == id).FirstOrDefault();
-            if (admin == null) return NotFound(new { Message = "No se encontró al administrador"});
-            if (admin.password != dto.Password) return Unauthorized(new {Message = "La contraseña es incorrecta"});
+            if (admin == null) return NotFound(new { Message = "No se encontró al administrador" });
+            if (admin.password != dto.Password) return Unauthorized(new { Message = "La contraseña es incorrecta" });
 
             admin.Nombre = dto.Nombre;
             admin.Apellido = dto.Apellido;
@@ -43,7 +43,7 @@ public class AdminController : ControllerBase
         }
     }
     [HttpPost]
-    public Admin Create([FromBody] AdminCreateDto dto)
+    public IActionResult Create([FromBody] AdminCreateDto dto)
     {
         using (var context = new ITReportContext())
         {
@@ -52,12 +52,13 @@ public class AdminController : ControllerBase
             admin.Nombre = dto.Nombre;
             admin.Apellido = dto.Apellido;
             admin.Usuario = dto.Usuario;
+            if (dto.Password == null) return BadRequest(new { Message = "No se ingresó una contraseña" });
             admin.password = dto.Password;
 
             context.Admins.Add(admin);
 
             context.SaveChanges();
-            return admin;
+            return Ok(admin);
         }
     }
 }
