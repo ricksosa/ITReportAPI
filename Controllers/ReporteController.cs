@@ -107,7 +107,7 @@ public class ReporteController : ControllerBase
                 reporte.TipoDeIncidenteId == dto.TipoDeIncidenteId
             ).Count() > 0;
 
-            if (isReporteDuplicado) return BadRequest(new { Message = "Este request ya existe" });
+            if(isReporteDuplicado) return Ok(newReporte);
 
             newReporte.ComentariosReporte = dto.Comentarios;
             newReporte.FechaDeReporte = DateTime.Now;
