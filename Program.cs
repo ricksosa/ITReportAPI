@@ -1,15 +1,21 @@
 using ITReportAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
+var  policyName = "_myAllowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
-    {
-        policy.WithOrigins().AllowAnyOrigin();
-    });
+    options.AddPolicy(name: policyName,
+         builder =>
+            {
+                builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
 });
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
@@ -34,7 +40,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors();
+app.UseCors(policyName);
 
 app.UseAuthorization();
 
