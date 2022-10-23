@@ -47,7 +47,9 @@ public class ReporteController : ControllerBase
     {
         using (var context = new ITReportContext())
         {
-            var query = context.Reportes.AsQueryable();
+            var query = context.Reportes
+                .Include(r => r.Computadora)
+                .AsQueryable();
 
             if (filtro?.CategoriaId != null) query = query.Where(r => r.CategoriaId == filtro.CategoriaId);
             if (filtro?.ComputadoraId != null) query = query.Where(r => r.ComputadoraId == filtro.ComputadoraId);
