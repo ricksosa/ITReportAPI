@@ -60,6 +60,7 @@ public class ReporteController : ControllerBase
             return query
                 .Include(r => r.Categoria)
                 .Include(r => r.Computadora)
+                .Include(r => r.Sala)
                 .Include(r => r.Computadora.Sala)
                 .Include(r => r.Estado)
                 .Include(r => r.Incidente)
