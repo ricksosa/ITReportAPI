@@ -1,5 +1,6 @@
 using ITReportAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ITReportAPI.Controllers;
 [ApiController]
@@ -29,19 +30,23 @@ public class SalaController : ControllerBase
     {
         using (var context = new ITReportContext())
         {
-            return context.Salas
+            var salas = context.Salas
+                .Include(s => s.Reportes)
+                .Include(s => s.Computadoras).ThenInclude(c => c.Reportes)
                 .Where(sala => sala.Nombre.ToLower().Contains(search.Value.ToLower()))
-                .Select(sala => new SalaSearchResult()
-                {
-                    Id = sala.Id,
-                    Nombre = sala.Nombre,
-                    SolicitudesSala = sala.Reportes.Where(r => r.CategoriaId == (int)Categoria.Solicitud && r.SalaId != null).Count(),
-                    ReportesSala = sala.Reportes.Where(r => r.CategoriaId == (int)Categoria.Reporte && r.SalaId != null).Count(),
-                    Computadoras = sala.Computadoras.Count(),
-                    SolicitudesPC = sala.Reportes.Where(r => r.CategoriaId == (int)Categoria.Solicitud && r.ComputadoraId != null).Count(),
-                    ReportesPC = sala.Reportes.Where(r => r.CategoriaId == (int)Categoria.Reporte && r.ComputadoraId != null).Count(),
-                })
                 .ToList();
+
+            return salas.Select(sala => new SalaSearchResult()
+            {
+                Id = sala.Id,
+                Nombre = sala.Nombre,
+                SolicitudesSala = sala.Reportes.Where(r => r.CategoriaId == (int)Categoria.Solicitud && r.SalaId != null).Count(),
+                ReportesSala = sala.Reportes.Where(r => r.CategoriaId == (int)Categoria.Reporte && r.SalaId != null).Count(),
+                Computadoras = sala.Computadoras.Count(),
+                SolicitudesPC = sala.Computadoras.Select(c => c.Reportes.Where(r => r.CategoriaId == (int)Categoria.Solicitud)).Count(),
+                ReportesPC= sala.Computadoras.Select(c => c.Reportes.Where(r => r.CategoriaId == (int)Categoria.Reporte)).Count(),
+            })
+            .ToList();
         }
     }
     public class SalaSearchResult
