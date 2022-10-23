@@ -107,9 +107,10 @@ public class ReporteController : ControllerBase
                 reporte.TipoDeIncidenteId == dto.TipoDeIncidenteId
             ).Count() > 0;
 
-            if(isReporteDuplicado) return Ok(newReporte);
+            if (isReporteDuplicado) return Ok(newReporte);
 
-            newReporte.ComentariosReporte = dto.Comentarios;
+            if (dto.Comentarios != null)
+                newReporte.ComentariosReporte = dto.Comentarios;
             newReporte.FechaDeReporte = DateTime.Now;
 
             if (!dto.CategoriaId.HasValue) return BadRequest(new { Message = "No se seleccionó una categoría" });
@@ -141,8 +142,8 @@ public class ReporteCreateDto
     public int? ComputadoraId { get; set; }
     public int? SalaId { get; set; }
     public int? TipoDeIncidenteId { get; set; }
-    public string Comentarios { get; set; } = null!;
-    public string ComentariosAdmin { get; set; } = null!;
+    public string? Comentarios { get; set; } = null!;
+    public string? ComentariosAdmin { get; set; } = null!;
     public int? EstadoId { get; set; } = null!;
 }
 public enum EstadoReporte
