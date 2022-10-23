@@ -103,7 +103,7 @@ public class ReporteController : ControllerBase
                 reporte.TipoDeIncidenteId == dto.TipoDeIncidenteId
             ).Count() > 0;
 
-            if(isReporteDuplicado) throw new Exception("Este reporte ya se ha levantado anteriormente");
+            if(isReporteDuplicado) return newReporte;
 
             newReporte.ComentariosReporte = dto.Comentarios;
             newReporte.FechaDeReporte = DateTime.Now;
