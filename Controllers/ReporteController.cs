@@ -32,7 +32,7 @@ public class ReporteController : ControllerBase
             if (dto.EstadoId.HasValue)
                 reporte.EstadoId = dto.EstadoId.Value;
             if (dto.ComentariosAdmin != null)
-                reporte.ComentariosAdmin= dto.ComentariosAdmin;
+                reporte.ComentariosAdmin = dto.ComentariosAdmin;
 
             context.SaveChanges();
             return reporte;
@@ -51,7 +51,13 @@ public class ReporteController : ControllerBase
             if (filtro?.SalaId != null) query = query.Where(r => r.Computadora.SalaId == filtro.SalaId);
             if (filtro?.TipoDeIncidenteId != null) query = query.Where(r => r.TipoDeIncidenteId == filtro.TipoDeIncidenteId);
 
-            return query.ToList();
+            return query
+                .Include(r => r.Categoria)
+                .Include(r => r.Computadora)
+                .Include(r => r.Computadora.Sala)
+                .Include(r => r.Estado)
+                .Include(r => r.Incidente)
+                .ToList();
         }
     }
 
