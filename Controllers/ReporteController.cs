@@ -48,13 +48,12 @@ public class ReporteController : ControllerBase
         using (var context = new ITReportContext())
         {
             var query = context.Reportes
-                .Include(r => r.Computadora)
                 .AsQueryable();
 
             if (filtro?.CategoriaId != null) query = query.Where(r => r.CategoriaId == filtro.CategoriaId);
             if (filtro?.ComputadoraId != null) query = query.Where(r => r.ComputadoraId == filtro.ComputadoraId);
             if (filtro?.EstadoId != null) query = query.Where(r => r.EstadoId == filtro.EstadoId);
-            if (filtro?.SalaId != null) query = query.Where(r => r.Computadora.SalaId == filtro.SalaId);
+            if (filtro?.SalaId != null) query = query.Where(r => r.SalaId == filtro.SalaId);
             if (filtro?.TipoDeIncidenteId != null) query = query.Where(r => r.TipoDeIncidenteId == filtro.TipoDeIncidenteId);
             if (filtro?.IgnorarEstadoId != null) query.Where(r => r.EstadoId != filtro.IgnorarEstadoId);
 
