@@ -25,13 +25,13 @@ public class AdminController : ControllerBase
         }
     }
     [HttpPut("{id}")]
-    public Admin Update(int id, [FromBody] AdminCreateDto dto)
+    public IActionResult Update(int id, [FromBody] AdminCreateDto dto)
     {
         using (var context = new ITReportContext())
         {
             var admin = context.Admins.Where(s => s.Id == id).FirstOrDefault();
-            if (admin == null) throw new Exception("Admin " + id + " not found");
-            if (admin.password != dto.Password) throw new Exception("Password is incorrect");
+            if (admin == null) return NotFound(new { Message = "No se encontró al administrador"});
+            if (admin.password != dto.Password) return Unauthorized(new {Message = "La contraseña es incorrecta"});
 
             admin.Nombre = dto.Nombre;
             admin.Apellido = dto.Apellido;
@@ -39,7 +39,7 @@ public class AdminController : ControllerBase
 
             context.SaveChanges();
 
-            return admin;
+            return Ok(admin);
         }
     }
     [HttpPost]

@@ -92,7 +92,7 @@ public class ReporteController : ControllerBase
 
             if (dto.SalaId != null) newReporte.SalaId = dto.SalaId;
             else if (dto.ComputadoraId != null) newReporte.ComputadoraId = dto.ComputadoraId;
-            else throw new Exception("No SalaId or ComputadoraId was specified");
+            else return new Reporte();
 
             var isReporteDuplicado = context.Reportes.Where(reporte =>
                 (
