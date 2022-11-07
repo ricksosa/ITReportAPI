@@ -73,6 +73,22 @@ public class ComputadoraController : ControllerBase
         public int Hardware { get; set; }
     }
     [HttpPost]
+    public Computadora CreateV2([FromBody] ComputadoraCreateDTOv2 dto)
+    {
+        using (var context = new ITReportContext())
+        {
+            var computadora = new Computadora();
+
+            computadora.Gabinete = dto.Gabinete;
+            computadora.SalaId = dto.SalaId;
+            dto.ComponentesSoftware.ForEach(Id => computadora.Components.Add(new Componente() { Id = Id }));
+            dto.ComponentsHardware.ForEach(Id => computadora.Components.Add(new Componente() { Id = Id }));
+            context.SaveChanges();
+
+            return computadora;
+        }
+    }
+    [HttpPost]
     public Computadora Create([FromBody] ComputadoraCreateDTO dto)
     {
         using (var context = new ITReportContext())
@@ -87,6 +103,13 @@ public class ComputadoraController : ControllerBase
             return newCompu;
         }
     }
+}
+public class ComputadoraCreateDTOv2
+{
+    public string Gabinete { get; set; } = null!;
+    public int SalaId { get; set; }
+    public List<int> ComponentesSoftware { get; set; } = null!;
+    public List<int> ComponentsHardware { get; set; } = null!;
 }
 public class ComputadoraCreateDTO
 {

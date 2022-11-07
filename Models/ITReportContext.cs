@@ -52,6 +52,7 @@ namespace ITReportAPI.Models
         public DbSet<Admin> Admins { get; set; } = null!;
         public DbSet<Reporte> Reportes { get; set; } = null!;
         public DbSet<Computadora> Computadoras { get; set; } = null!;
+        public DbSet<Componente> Componentes { get; set; } = null!;
         public DbSet<CategoriaReporte> CategoriasReporte { get; set; } = null!;
         public DbSet<TipoDeIncidente> TiposDeIncidente { get; set; } = null!;
         public DbSet<EstadoReporte> EstadosReporte { get; set; } = null!;
