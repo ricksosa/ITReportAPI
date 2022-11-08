@@ -25,6 +25,20 @@ public class ComponenteController : ControllerBase
             return context.Componentes.Where(componente => componente.Id == Id).FirstOrDefault();
         }
     }
+    [HttpGet("computadora/{id}")]
+    public IActionResult GetComponentesFromComputador(int IdComputadora)
+    {
+        using (var context = new ITReportContext())
+        {
+            var computadora = context.Computadoras
+                .Include(c => c.Components)
+                .Where(computadora => computadora.Id == IdComputadora)
+                .SingleOrDefault();
+            if (computadora == null) NotFound(new {Message = "No se encontró la computadora " + IdComputadora});
+            else return Ok(computadora.Components);
+        }
+        return Ok(new List<Componente>());
+    }
     [HttpPost]
     public Componente Create(ComponenteDto dto)
     {

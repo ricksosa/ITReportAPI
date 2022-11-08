@@ -43,7 +43,7 @@ namespace ITReportAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Admins");
+                    b.ToTable("Admins", (string)null);
                 });
 
             modelBuilder.Entity("ITReportAPI.Models.CategoriaComputadora", b =>
@@ -58,7 +58,7 @@ namespace ITReportAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CategoriaComputadora");
+                    b.ToTable("CategoriaComputadora", (string)null);
 
                     b.HasData(
                         new
@@ -85,7 +85,7 @@ namespace ITReportAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CategoriasReporte");
+                    b.ToTable("CategoriasReporte", (string)null);
 
                     b.HasData(
                         new
@@ -126,7 +126,7 @@ namespace ITReportAPI.Migrations
 
                     b.HasIndex("ComputadoraId");
 
-                    b.ToTable("Componentes");
+                    b.ToTable("Componentes", (string)null);
                 });
 
             modelBuilder.Entity("ITReportAPI.Models.Computadora", b =>
@@ -146,7 +146,7 @@ namespace ITReportAPI.Migrations
 
                     b.HasIndex("SalaId");
 
-                    b.ToTable("Computadoras");
+                    b.ToTable("Computadoras", (string)null);
                 });
 
             modelBuilder.Entity("ITReportAPI.Models.EstadoReporte", b =>
@@ -161,7 +161,7 @@ namespace ITReportAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EstadosReporte");
+                    b.ToTable("EstadosReporte", (string)null);
 
                     b.HasData(
                         new
@@ -232,7 +232,7 @@ namespace ITReportAPI.Migrations
 
                     b.HasIndex("TipoDeIncidenteId");
 
-                    b.ToTable("Reportes");
+                    b.ToTable("Reportes", (string)null);
                 });
 
             modelBuilder.Entity("ITReportAPI.Models.Sala", b =>
@@ -251,7 +251,7 @@ namespace ITReportAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Salas");
+                    b.ToTable("Salas", (string)null);
                 });
 
             modelBuilder.Entity("ITReportAPI.Models.TipoDeIncidente", b =>
@@ -271,7 +271,7 @@ namespace ITReportAPI.Migrations
 
                     b.HasIndex("CategoriaReporteId");
 
-                    b.ToTable("TiposDeIncidente");
+                    b.ToTable("TiposDeIncidente", (string)null);
 
                     b.HasData(
                         new
