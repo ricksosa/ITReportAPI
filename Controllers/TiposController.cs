@@ -1,9 +1,11 @@
 using ITReportAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ITReportAPI.Controllers;
 [ApiController]
 [Route("/api/tipos")]
+[Authorize]
 public class TiposController : ControllerBase
 {
     [HttpGet("incidentes")]

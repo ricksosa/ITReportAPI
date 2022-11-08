@@ -1,10 +1,12 @@
 using System.Net;
 using ITReportAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ITReportAPI.Controllers;
 [ApiController]
+[Authorize]
 [Route("/api/reportes")]
 public class ReporteController : ControllerBase
 {

@@ -1,10 +1,12 @@
 using ITReportAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ITReportAPI.Controllers;
 [ApiController]
 [Route("/api/salas")]
+[Authorize]
 public class SalaController : ControllerBase
 {
     [HttpGet]
