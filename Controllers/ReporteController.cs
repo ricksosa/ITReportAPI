@@ -44,6 +44,21 @@ public class ReporteController : ControllerBase
             return reporte;
         }
     }
+    [HttpDelete("{id}")]
+    public IActionResult Delete(int id)
+    {
+        using (var context = new ITReportContext())
+        {
+            var reporte = context.Reportes.Where(r => r.Id == id).FirstOrDefault();
+            if (reporte == null) return NotFound(new { Message = "Computadora " + id + " does not exist"});
+
+            context.Reportes.Remove(reporte);
+
+            context.SaveChanges();
+            return Ok();
+        }
+
+    }
     [HttpPost("filtrar")]
     public List<Reporte> Filtar([FromBody] ReporteFilter filtro)
     {

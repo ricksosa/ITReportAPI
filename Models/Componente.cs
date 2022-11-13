@@ -7,5 +7,6 @@ namespace ITReportAPI.Models
         public string Numero { get; set; } = null!;
         public CategoriaComputadora Categoria { get; set; } = null!;
         public int CategoriaId { get; set; }
+        public ICollection<Computadora> Computadoras { get; set; } = null!;
     }
 }

@@ -17,6 +17,16 @@ public class ComponenteController : ControllerBase
             return context.Componentes.ToList();
         }
     }
+    [HttpGet("unassigned")]
+    public List<Componente> GetAllUnassigned()
+    {
+        using (var context = new ITReportContext())
+        {
+            return context.Componentes
+                .Where(componente => componente.Computadoras.Count == 0)
+                .ToList();
+        }
+    }
     [HttpGet("{Id}")]
     public Componente? GetById(int Id)
     {
@@ -25,7 +35,7 @@ public class ComponenteController : ControllerBase
             return context.Componentes.Where(componente => componente.Id == Id).FirstOrDefault();
         }
     }
-    [HttpGet("computadora/{id}")]
+    [HttpGet("computadora/{IdComputadora}")]
     public IActionResult GetComponentesFromComputador(int IdComputadora)
     {
         using (var context = new ITReportContext())
@@ -34,10 +44,43 @@ public class ComponenteController : ControllerBase
                 .Include(c => c.Components)
                 .Where(computadora => computadora.Id == IdComputadora)
                 .SingleOrDefault();
-            if (computadora == null) NotFound(new {Message = "No se encontró la computadora " + IdComputadora});
+            if (computadora == null) NotFound(new { Message = "No se encontró la computadora " + IdComputadora });
             else return Ok(computadora.Components);
         }
         return Ok(new List<Componente>());
+    }
+    [HttpPut("{id}")]
+    public IActionResult Update(int id, [FromBody] ComponenteDto dto)
+    {
+
+        using (var context = new ITReportContext())
+        {
+
+            var componente = context.Componentes.Where(componente => componente.Id == id).FirstOrDefault();
+            if (componente == null) return NotFound(new { Message = "Component " + id + " does not exist"});
+
+            componente.CategoriaId = (int)dto.CategoriaId;
+            componente.Nombre = dto.Nombre;
+            componente.Numero = dto.Numero;
+
+            context.SaveChanges();
+            return Ok(componente);
+        }
+    }
+    [HttpDelete("{id}")]
+    public IActionResult Delete(int id)
+    {
+        using (var context = new ITReportContext())
+        {
+            var componente = context.Componentes.Where(componente => componente.Id == id).FirstOrDefault();
+            if (componente == null) return NotFound(new { Message = "Component " + id + " does not exist"});
+
+            context.Componentes.Remove(componente);
+
+            context.SaveChanges();
+            return Ok();
+        }
+
     }
     [HttpPost]
     public Componente Create(ComponenteDto dto)
@@ -50,8 +93,9 @@ public class ComponenteController : ControllerBase
             componente.CategoriaId = (int)dto.CategoriaId;
             componente.Nombre = dto.Nombre;
             componente.Numero = dto.Numero;
-            
+
             context.Componentes.Add(componente);
+            context.SaveChanges();
             return componente;
         }
 

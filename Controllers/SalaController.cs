@@ -14,7 +14,7 @@ public class SalaController : ControllerBase
     {
         using (var context = new ITReportContext())
         {
-            return context.Salas.ToList();
+            return context.Salas.Include(sala => sala.Computadoras).ToList();
         }
     }
     [HttpGet("{id}")]
@@ -26,6 +26,21 @@ public class SalaController : ControllerBase
             if (sala == null) throw new Exception("Sala not found");
             return sala;
         }
+    }
+    [HttpDelete("{id}")]
+    public IActionResult Delete(int id)
+    {
+        using (var context = new ITReportContext())
+        {
+            var sala = context.Salas.Where(sala => sala.Id == id).FirstOrDefault();
+            if (sala == null) return NotFound(new { Message = "Sala " + id + " does not exist"});
+
+            context.Salas.Remove(sala);
+
+            context.SaveChanges();
+            return Ok();
+        }
+
     }
     [HttpPost("search")]
     public List<SalaSearchResult> Search([FromBody] SearchDto search)

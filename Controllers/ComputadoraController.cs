@@ -74,7 +74,7 @@ public class ComputadoraController : ControllerBase
         public int Software { get; set; }
         public int Hardware { get; set; }
     }
-    [HttpPost]
+    [HttpPost("v2")]
     public Computadora CreateV2([FromBody] ComputadoraCreateDTOv2 dto)
     {
         using (var context = new ITReportContext())
@@ -89,6 +89,21 @@ public class ComputadoraController : ControllerBase
 
             return computadora;
         }
+    }
+    [HttpDelete("{id}")]
+    public IActionResult Delete(int id)
+    {
+        using (var context = new ITReportContext())
+        {
+            var pc = context.Computadoras.Where(sala => sala.Id == id).FirstOrDefault();
+            if (pc == null) return NotFound(new { Message = "Computadora " + id + " does not exist"});
+
+            context.Computadoras.Remove(pc);
+
+            context.SaveChanges();
+            return Ok();
+        }
+
     }
     [HttpPost]
     public Computadora Create([FromBody] ComputadoraCreateDTO dto)
