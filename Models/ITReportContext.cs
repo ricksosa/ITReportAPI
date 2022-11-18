@@ -32,7 +32,8 @@ namespace ITReportAPI.Models
                 new EstadoReporte() { Id = 1, Nombre = "Pendiente" },
                 new EstadoReporte() { Id = 2, Nombre = "Detenido" },
                 new EstadoReporte() { Id = 3, Nombre = "Resuelto" },
-                new EstadoReporte() { Id = 4, Nombre = "Nuevo" }
+                new EstadoReporte() { Id = 4, Nombre = "Nuevo" },
+                new EstadoReporte() { Id = 5, Nombre = "Atendido" }
             );
             modelBuilder.Entity<TipoDeIncidente>()
                 .HasData(

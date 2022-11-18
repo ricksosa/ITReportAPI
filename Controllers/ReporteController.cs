@@ -123,7 +123,8 @@ public class ReporteController : ControllerBase
                     (newReporte.ComputadoraId != null && reporte.ComputadoraId == newReporte.ComputadoraId)
                 ) &&
                 reporte.CategoriaId == (int)Categoria.Reporte &&
-                reporte.TipoDeIncidenteId == dto.TipoDeIncidenteId
+                reporte.TipoDeIncidenteId == dto.TipoDeIncidenteId &&
+                reporte.EstadoId != (int) EstadoReporte.Resuelto
             ).Count() > 0;
 
             if (isReporteDuplicado) return Ok(newReporte);

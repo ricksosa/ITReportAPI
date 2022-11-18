@@ -83,8 +83,13 @@ public class ComputadoraController : ControllerBase
 
             computadora.Gabinete = dto.Gabinete;
             computadora.SalaId = dto.SalaId;
-            dto.ComponentesSoftware.ForEach(Id => computadora.Components.Add(new Componente() { Id = Id }));
-            dto.ComponentsHardware.ForEach(Id => computadora.Components.Add(new Componente() { Id = Id }));
+            computadora.Components = new List<Componente>();
+
+            context.Computadoras.Add(computadora);
+            context.SaveChanges();
+
+            dto.ComponentesSoftware.ForEach(Id => computadora.Components.Add(context.Componentes.Where(c => c.Id == Id).First()));
+            dto.ComponentsHardware.ForEach(Id => computadora.Components.Add(context.Componentes.Where(c => c.Id == Id).First()));
             context.SaveChanges();
 
             return computadora;
