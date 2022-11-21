@@ -15,7 +15,20 @@ public class ComputadoraController : ControllerBase
     {
         using (var context = new ITReportContext())
         {
-            return context.Computadoras.ToList();
+            return context.Computadoras
+            .Include(c => c.Components)
+            .ToList();
+        }
+    }
+    [HttpGet("sala/{id}")]
+    public List<Computadora> GetBySala(int id)
+    {
+        using (var context = new ITReportContext())
+        {
+            return context.Computadoras
+            .Include(c => c.Components)
+            .Where(c => c.SalaId == id)
+            .ToList();
         }
     }
     [HttpGet("{id}")]
@@ -88,11 +101,39 @@ public class ComputadoraController : ControllerBase
             context.Computadoras.Add(computadora);
             context.SaveChanges();
 
-            dto.ComponentesSoftware.ForEach(Id => computadora.Components.Add(context.Componentes.Where(c => c.Id == Id).First()));
-            dto.ComponentsHardware.ForEach(Id => computadora.Components.Add(context.Componentes.Where(c => c.Id == Id).First()));
-            context.SaveChanges();
+            if (dto.ComponentesSoftware != null)
+                dto.ComponentesSoftware.ForEach(Id => computadora.Components.Add(context.Componentes.Where(c => c.Id == Id).First()));
+
+            if (dto.ComponentsHardware != null)
+                dto.ComponentsHardware.ForEach(Id => computadora.Components.Add(context.Componentes.Where(c => c.Id == Id).First()));
+
+            if (dto.ComponentsHardware != null || dto.ComponentesSoftware != null)
+                context.SaveChanges();
 
             return computadora;
+        }
+    }
+    [HttpPut("v2/{id}")]
+    public Computadora UpdateV2(int id, [FromBody] ComputadoraCreateDTOv2 dto)
+    {
+        using (var context = new ITReportContext())
+        {
+            var computadora = context.Computadoras.Where(c => c.Id == id).FirstOrDefault();
+            if (computadora == null) throw new Exception("Computadora " + id + " not found");
+
+            computadora.Gabinete = dto.Gabinete;
+            computadora.SalaId = dto.SalaId;
+            computadora.Components = new List<Componente>();
+
+            if (dto.ComponentesSoftware != null)
+                dto.ComponentesSoftware.ForEach(Id => computadora.Components.Add(context.Componentes.Where(c => c.Id == Id).First()));
+
+            if (dto.ComponentsHardware != null)
+                dto.ComponentsHardware.ForEach(Id => computadora.Components.Add(context.Componentes.Where(c => c.Id == Id).First()));
+
+            context.SaveChanges();
+            return computadora;
+
         }
     }
     [HttpDelete("{id}")]
@@ -101,7 +142,7 @@ public class ComputadoraController : ControllerBase
         using (var context = new ITReportContext())
         {
             var pc = context.Computadoras.Where(sala => sala.Id == id).FirstOrDefault();
-            if (pc == null) return NotFound(new { Message = "Computadora " + id + " does not exist"});
+            if (pc == null) return NotFound(new { Message = "Computadora " + id + " does not exist" });
 
             context.Computadoras.Remove(pc);
 
@@ -130,8 +171,8 @@ public class ComputadoraCreateDTOv2
 {
     public string Gabinete { get; set; } = null!;
     public int SalaId { get; set; }
-    public List<int> ComponentesSoftware { get; set; } = null!;
-    public List<int> ComponentsHardware { get; set; } = null!;
+    public List<int>? ComponentesSoftware { get; set; }
+    public List<int>? ComponentsHardware { get; set; }
 }
 public class ComputadoraCreateDTO
 {
