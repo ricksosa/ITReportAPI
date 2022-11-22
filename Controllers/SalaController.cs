@@ -33,7 +33,7 @@ public class SalaController : ControllerBase
         using (var context = new ITReportContext())
         {
             var sala = context.Salas.Where(sala => sala.Id == id).FirstOrDefault();
-            if (sala == null) return NotFound(new { Message = "Sala " + id + " does not exist"});
+            if (sala == null) return NotFound(new { Message = "Sala " + id + " does not exist" });
 
             context.Salas.Remove(sala);
 
@@ -42,6 +42,7 @@ public class SalaController : ControllerBase
         }
 
     }
+    [AllowAnonymous]
     [HttpPost("search")]
     public List<SalaSearchResult> Search([FromBody] SearchDto search)
     {
@@ -105,7 +106,7 @@ public class SalaController : ControllerBase
         }
     }
     [HttpPost]
-    public Sala Create([FromBody] SalaCreateDto dto)
+    public IActionResult Create([FromBody] SalaCreateDto dto)
     {
         using (var context = new ITReportContext())
         {
@@ -114,9 +115,14 @@ public class SalaController : ControllerBase
             newSala.Nombre = dto.Nombre;
             newSala.Edificio = dto.Edificio;
 
+            if (context.Salas.Any(s => s.Nombre == dto.Nombre))
+            {
+                BadRequest(new { Message = "Ya existe una sala con ese nombre" });
+            }
+
             context.Salas.Add(newSala);
             context.SaveChanges();
-            return newSala;
+            return Ok(newSala);
         }
     }
 }

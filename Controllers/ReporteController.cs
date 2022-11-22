@@ -10,6 +10,41 @@ namespace ITReportAPI.Controllers;
 [Route("/api/reportes")]
 public class ReporteController : ControllerBase
 {
+    [HttpGet("dashboard")]
+    public DashboardReport Dashboard()
+    {
+        using (var context = new ITReportContext())
+        {
+            var computadoras = context.Computadoras.Count();
+            var salas = context.Salas.Count();
+            var reportes = context.Reportes.Count();
+            var atendiendose = context.Reportes.Where(r => r.EstadoId == (int)EstadoReporte.Atendido).Count();
+            var finalizados = context.Reportes.Where(r => r.EstadoId == (int)EstadoReporte.Resuelto).Count();
+            var detenidos = context.Reportes.Where(r => r.EstadoId == (int)EstadoReporte.Detenido).Count();
+            var pendientes = context.Reportes.Where(r => r.EstadoId == (int)EstadoReporte.Pendiente).Count();
+
+            return new DashboardReport()
+            {
+                Computadoras = computadoras,
+                Salas = salas,
+                Reportes = reportes,
+                ReportesAtendiendose = atendiendose,
+                ReportesFinalizados = finalizados,
+                ReportesDetenidos = detenidos,
+                ReportesPendientes = pendientes,
+            };
+        }
+    }
+    public class DashboardReport
+    {
+        public int Computadoras { get; set; }
+        public int Salas { get; set; }
+        public int Reportes { get; set; }
+        public int ReportesAtendiendose { get; set; }
+        public int ReportesFinalizados { get; set; }
+        public int ReportesDetenidos { get; set; }
+        public int ReportesPendientes { get; set; }
+    }
     [HttpGet]
     public List<Reporte> GetAll()
     {
@@ -50,7 +85,7 @@ public class ReporteController : ControllerBase
         using (var context = new ITReportContext())
         {
             var reporte = context.Reportes.Where(r => r.Id == id).FirstOrDefault();
-            if (reporte == null) return NotFound(new { Message = "Computadora " + id + " does not exist"});
+            if (reporte == null) return NotFound(new { Message = "Computadora " + id + " does not exist" });
 
             context.Reportes.Remove(reporte);
 
@@ -59,6 +94,7 @@ public class ReporteController : ControllerBase
         }
 
     }
+    [AllowAnonymous]
     [HttpPost("filtrar")]
     public List<Reporte> Filtar([FromBody] ReporteFilter filtro)
     {
@@ -107,6 +143,7 @@ public class ReporteController : ControllerBase
         }
     }
     [HttpPost]
+    [AllowAnonymous]
     public IActionResult Create([FromBody] ReporteCreateDto dto)
     {
         using (var context = new ITReportContext())
@@ -124,7 +161,7 @@ public class ReporteController : ControllerBase
                 ) &&
                 reporte.CategoriaId == (int)Categoria.Reporte &&
                 reporte.TipoDeIncidenteId == dto.TipoDeIncidenteId &&
-                reporte.EstadoId != (int) EstadoReporte.Resuelto
+                reporte.EstadoId != (int)EstadoReporte.Resuelto
             ).Count() > 0;
 
             if (isReporteDuplicado) return Ok(newReporte);
@@ -171,6 +208,7 @@ public enum EstadoReporte
     Pendiente = 1,
     Detenido = 2,
     Resuelto = 3,
-    Nuevo = 4
+    Nuevo = 4,
+    Atendido = 5,
 
 }

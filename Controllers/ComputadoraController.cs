@@ -21,12 +21,14 @@ public class ComputadoraController : ControllerBase
         }
     }
     [HttpGet("sala/{id}")]
+    [AllowAnonymous]
     public List<Computadora> GetBySala(int id)
     {
         using (var context = new ITReportContext())
         {
             return context.Computadoras
             .Include(c => c.Components)
+            .Include(c => c.Reportes)
             .Where(c => c.SalaId == id)
             .ToList();
         }
@@ -57,6 +59,7 @@ public class ComputadoraController : ControllerBase
 
         }
     }
+    [AllowAnonymous]
     [HttpPost("search")]
     public List<ComputadorasSearchResult> Search(SearchDto search)
     {
@@ -88,7 +91,7 @@ public class ComputadoraController : ControllerBase
         public int Hardware { get; set; }
     }
     [HttpPost("v2")]
-    public Computadora CreateV2([FromBody] ComputadoraCreateDTOv2 dto)
+    public ActionResult CreateV2([FromBody] ComputadoraCreateDTOv2 dto)
     {
         using (var context = new ITReportContext())
         {
@@ -97,6 +100,10 @@ public class ComputadoraController : ControllerBase
             computadora.Gabinete = dto.Gabinete;
             computadora.SalaId = dto.SalaId;
             computadora.Components = new List<Componente>();
+            if (context.Computadoras.Any(c => c.Gabinete == dto.Gabinete))
+            {
+                return BadRequest(new { Message = "Ya existe una computadora con ese número de Gabinete" });
+            }
 
             context.Computadoras.Add(computadora);
             context.SaveChanges();
@@ -110,7 +117,7 @@ public class ComputadoraController : ControllerBase
             if (dto.ComponentsHardware != null || dto.ComponentesSoftware != null)
                 context.SaveChanges();
 
-            return computadora;
+            return Ok(computadora);
         }
     }
     [HttpPut("v2/{id}")]
@@ -118,12 +125,17 @@ public class ComputadoraController : ControllerBase
     {
         using (var context = new ITReportContext())
         {
-            var computadora = context.Computadoras.Where(c => c.Id == id).FirstOrDefault();
+            var computadora = context
+                .Computadoras
+                .Include(c => c.Components)
+                .Where(c => c.Id == id).FirstOrDefault();
+
             if (computadora == null) throw new Exception("Computadora " + id + " not found");
 
             computadora.Gabinete = dto.Gabinete;
             computadora.SalaId = dto.SalaId;
-            computadora.Components = new List<Componente>();
+            computadora.Components.Clear();
+            context.SaveChanges();
 
             if (dto.ComponentesSoftware != null)
                 dto.ComponentesSoftware.ForEach(Id => computadora.Components.Add(context.Componentes.Where(c => c.Id == Id).First()));

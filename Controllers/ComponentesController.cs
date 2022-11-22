@@ -6,10 +6,10 @@ using Microsoft.EntityFrameworkCore;
 namespace ITReportAPI.Controllers;
 [ApiController]
 [Route("/api/Componentes")]
-[Authorize]
 public class ComponenteController : ControllerBase
 {
     [HttpGet]
+    [Authorize]
     public List<Componente> GetAll()
     {
         using (var context = new ITReportContext())
@@ -35,6 +35,7 @@ public class ComponenteController : ControllerBase
             return context.Componentes.Where(componente => componente.Id == Id).FirstOrDefault();
         }
     }
+    [AllowAnonymous]
     [HttpGet("computadora/{IdComputadora}")]
     public IActionResult GetComponentesFromComputador(int IdComputadora)
     {
@@ -57,7 +58,7 @@ public class ComponenteController : ControllerBase
         {
 
             var componente = context.Componentes.Where(componente => componente.Id == id).FirstOrDefault();
-            if (componente == null) return NotFound(new { Message = "Component " + id + " does not exist"});
+            if (componente == null) return NotFound(new { Message = "Component " + id + " does not exist" });
 
             componente.CategoriaId = (int)dto.CategoriaId;
             componente.Nombre = dto.Nombre;
@@ -73,7 +74,7 @@ public class ComponenteController : ControllerBase
         using (var context = new ITReportContext())
         {
             var componente = context.Componentes.Where(componente => componente.Id == id).FirstOrDefault();
-            if (componente == null) return NotFound(new { Message = "Component " + id + " does not exist"});
+            if (componente == null) return NotFound(new { Message = "Component " + id + " does not exist" });
 
             context.Componentes.Remove(componente);
 
@@ -83,7 +84,7 @@ public class ComponenteController : ControllerBase
 
     }
     [HttpPost]
-    public Componente Create(ComponenteDto dto)
+    public IActionResult Create(ComponenteDto dto)
     {
         using (var context = new ITReportContext())
         {
@@ -94,9 +95,14 @@ public class ComponenteController : ControllerBase
             componente.Nombre = dto.Nombre;
             componente.Numero = dto.Numero;
 
+            if (context.Componentes.Any(c => c.Numero == dto.Numero))
+            {
+                return BadRequest(new { Message = "Ya existe un componente con ese número" });
+            }
+
             context.Componentes.Add(componente);
             context.SaveChanges();
-            return componente;
+            return Ok(componente);
         }
 
 
