@@ -9,6 +9,7 @@ namespace ITReportAPI.Controllers;
 public class TiposController : ControllerBase
 {
     [HttpGet("incidentes")]
+    [AllowAnonymous]
     public List<TipoDeIncidente> GetAll()
     {
         using (var context = new ITReportContext())
@@ -17,6 +18,7 @@ public class TiposController : ControllerBase
         }
     }
     [HttpGet("categorias")]
+    [AllowAnonymous]
     public List<CategoriaReporte> GetCategoriaReportes()
     {
         using (var context = new ITReportContext())
