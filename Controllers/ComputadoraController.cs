@@ -28,7 +28,7 @@ public class ComputadoraController : ControllerBase
         {
             return context.Computadoras
             .Include(c => c.Components)
-            .Include(c => c.Reportes)
+            .Include(c => c.Reportes.Where(r => r.EstadoId != (int)EstadoReporte.Nuevo && r.EstadoId != (int)EstadoReporte.Resuelto))
             .Where(c => c.SalaId == id)
             .ToList();
         }
@@ -121,7 +121,7 @@ public class ComputadoraController : ControllerBase
         }
     }
     [HttpPut("v2/{id}")]
-    public Computadora UpdateV2(int id, [FromBody] ComputadoraCreateDTOv2 dto)
+    public IActionResult UpdateV2(int id, [FromBody] ComputadoraCreateDTOv2 dto)
     {
         using (var context = new ITReportContext())
         {
@@ -130,8 +130,12 @@ public class ComputadoraController : ControllerBase
                 .Include(c => c.Components)
                 .Where(c => c.Id == id).FirstOrDefault();
 
-            if (computadora == null) throw new Exception("Computadora " + id + " not found");
+            if (computadora == null) return BadRequest(new { Message = "Computadora " + id + " not found" });
 
+            var gabineteDuplicado = context.Computadoras
+                .Where(c => c.Gabinete == dto.Gabinete && c.Id != id).Any();
+
+            if (gabineteDuplicado) return BadRequest(new { Message = "Ya existe una computadora con el nombre de gabinete '" + dto.Gabinete + "'." });
             computadora.Gabinete = dto.Gabinete;
             computadora.SalaId = dto.SalaId;
             computadora.Components.Clear();
@@ -144,7 +148,7 @@ public class ComputadoraController : ControllerBase
                 dto.ComponentsHardware.ForEach(Id => computadora.Components.Add(context.Componentes.Where(c => c.Id == Id).First()));
 
             context.SaveChanges();
-            return computadora;
+            return Ok(computadora);
 
         }
     }

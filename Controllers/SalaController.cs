@@ -63,13 +63,13 @@ public class SalaController : ControllerBase
                 Computadoras = sala.Computadoras.Count(),
                 SolicitudesPC = sala.Computadoras
                     .SelectMany(computadora => computadora.Reportes)
-                    .Where(reporte => reporte.CategoriaId == (int)Categoria.Solicitud && reporte.EstadoId != (int)EstadoReporte.Resuelto)
+                    .Where(reporte => reporte.CategoriaId == (int)Categoria.Solicitud && reporte.EstadoId != (int)EstadoReporte.Resuelto && reporte.EstadoId != (int)EstadoReporte.Nuevo)
                     .Select(r => r.Id)
                     .Distinct()
                     .Count(),
                 ReportesPC = sala.Computadoras
                     .SelectMany(computadora => computadora.Reportes)
-                    .Where(reporte => reporte.CategoriaId == (int)Categoria.Reporte && reporte.EstadoId != (int)EstadoReporte.Resuelto)
+                    .Where(reporte => reporte.CategoriaId == (int)Categoria.Reporte && reporte.EstadoId != (int)EstadoReporte.Resuelto && reporte.EstadoId != (int)EstadoReporte.Nuevo)
                     .Select(r => r.Id)
                     .Distinct()
                     .Count(),
