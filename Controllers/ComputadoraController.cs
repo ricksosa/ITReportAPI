@@ -72,8 +72,8 @@ public class ComputadoraController : ControllerBase
             {
                 Id = computadora.Id,
                 Gabinete = computadora.Gabinete,
-                Solicitudes = computadora.Reportes.Where(r => r.CategoriaId == (int)Categoria.Solicitud).Count(),
-                Reportes = computadora.Reportes.Where(r => r.CategoriaId == (int)Categoria.Reporte).Count(),
+                Solicitudes = computadora.Reportes.Where(r => r.CategoriaId == (int)Categoria.Solicitud && r.EstadoId != (int)EstadoReporte.Resuelto && r.EstadoId != (int)EstadoReporte.Nuevo).Count(),
+                Reportes = computadora.Reportes.Where(r => r.CategoriaId == (int)Categoria.Reporte && r.EstadoId != (int)EstadoReporte.Resuelto && r.EstadoId != (int)EstadoReporte.Nuevo).Count(),
                 Componentes = computadora.Components.Count,
                 Software = computadora.Components.Where(c => c.CategoriaId == (int)CategoriaComponent.Software).Count(),
                 Hardware = computadora.Components.Where(c => c.CategoriaId == (int)CategoriaComponent.Hardware).Count(),
