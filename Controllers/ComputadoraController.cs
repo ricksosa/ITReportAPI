@@ -135,7 +135,7 @@ public class ComputadoraController : ControllerBase
             var gabineteDuplicado = context.Computadoras
                 .Where(c => c.Gabinete == dto.Gabinete && c.Id != id).Any();
 
-            if (gabineteDuplicado) return BadRequest(new { Message = "Ya existe una computadora con el nombre de gabinete '" + dto.Gabinete + "'." });
+            if (gabineteDuplicado) return BadRequest(new { Message = "PC_DUPLICATE" });
             computadora.Gabinete = dto.Gabinete;
             computadora.SalaId = dto.SalaId;
             computadora.Components.Clear();

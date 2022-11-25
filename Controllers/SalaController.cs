@@ -99,7 +99,7 @@ public class SalaController : ControllerBase
             var salaDuplicada = context.Salas
                 .Where(s => s.Nombre == dto.Nombre && s.Id != id).Any();
 
-            if (salaDuplicada) return BadRequest(new { Message = "Ya existe una sala con el nombre de '" + dto.Nombre + "'." });
+            if (salaDuplicada) return BadRequest(new { Message = "ROOM_DUPLICATE" });
 
             sala.Edificio = dto.Edificio;
             sala.Nombre = dto.Nombre;

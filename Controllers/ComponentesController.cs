@@ -63,7 +63,7 @@ public class ComponenteController : ControllerBase
             var componenteDuplicado = context.Componentes
                 .Where(componente => componente.Numero == dto.Numero && componente.Id != id).Any();
 
-            if (componenteDuplicado) return BadRequest(new { Message = "Ya existe un componente con el numero de '" + dto.Numero + "'." });
+            if (componenteDuplicado) return BadRequest(new { Message = "COMPONENT_DUPLICATE" });
 
             
             componente.CategoriaId = (int)dto.CategoriaId;

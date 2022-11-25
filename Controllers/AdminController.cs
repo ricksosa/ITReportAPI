@@ -79,7 +79,7 @@ public class AdminController : ControllerBase
         {
             var admin = context.Admins.Where(s => s.Id == id).FirstOrDefault();
             if (admin == null) return NotFound(new { Message = "No se encontró al administrador" });
-            if (admin.password != dto.Password) return Unauthorized(new { Message = "La contraseña es incorrecta" });
+            if (admin.password != dto.Password) return Unauthorized(new { Message = "ERR_PASSWORD" });
 
             admin.Nombre = dto.Nombre;
             admin.Apellido = dto.Apellido;
