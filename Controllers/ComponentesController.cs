@@ -60,6 +60,12 @@ public class ComponenteController : ControllerBase
             var componente = context.Componentes.Where(componente => componente.Id == id).FirstOrDefault();
             if (componente == null) return NotFound(new { Message = "Component " + id + " does not exist" });
 
+            var componenteDuplicado = context.Componentes
+                .Where(componente => componente.Numero == dto.Numero && componente.Id != id).Any();
+
+            if (componenteDuplicado) return BadRequest(new { Message = "Ya existe un componente con el numero de '" + dto.Numero + "'." });
+
+            
             componente.CategoriaId = (int)dto.CategoriaId;
             componente.Nombre = dto.Nombre;
             componente.Numero = dto.Numero;

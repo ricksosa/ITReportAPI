@@ -89,19 +89,24 @@ public class SalaController : ControllerBase
 
     }
     [HttpPut("{id}")]
-    public Sala Update(int id, [FromBody] SalaCreateDto dto)
+    public IActionResult Update(int id, [FromBody] SalaCreateDto dto)
     {
         using (var context = new ITReportContext())
         {
             var sala = context.Salas.Where(s => s.Id == id).FirstOrDefault();
             if (sala == null) throw new Exception("Sala " + id + " not found");
 
+            var salaDuplicada = context.Salas
+                .Where(s => s.Nombre == dto.Nombre && s.Id != id).Any();
+
+            if (salaDuplicada) return BadRequest(new { Message = "Ya existe una sala con el nombre de '" + dto.Nombre + "'." });
+
             sala.Edificio = dto.Edificio;
             sala.Nombre = dto.Nombre;
 
             context.SaveChanges();
 
-            return sala;
+            return Ok(sala);
 
         }
     }
