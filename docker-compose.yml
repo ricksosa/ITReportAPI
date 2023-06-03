@@ -13,9 +13,9 @@ services:
     ports:
       - "7191:80"
   db:
-    # image: ricsos98/it-report-api:latest
-    build:
-      dockerfile: ./docker/db/dockerfile 
+    image: ricsos98/it-report-db:latest
+    # build:
+    #   dockerfile: ./docker/db/dockerfile 
     command: --default-authentication-plugin=mysql_native_password
     ports:
       - "3306:3306"
