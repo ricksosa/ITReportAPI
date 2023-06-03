@@ -1,0 +1,26 @@
+# docker compose up -d
+
+version: "3.9"
+services:
+  frontend:
+    image: ricsos98/it-report-ui:latest
+    ports:
+      - '80:80'
+  api: 
+    image: ricsos98/it-report-api:latest
+    # build: 
+    #   dockerfile: ./docker/api/dockerfile
+    ports:
+      - "7191:80"
+  db:
+    # image: ricsos98/it-report-api:latest
+    build:
+      dockerfile: ./docker/db/dockerfile 
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3306:3306"
+    environment:
+        MYSQL_ROOT_PASSWORD: example
+        MYSQL_DATABASE: ITReportDB 
+
+    

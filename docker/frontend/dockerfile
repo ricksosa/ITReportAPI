@@ -1,0 +1,2 @@
+FROM nginx:alpine
+COPY /docker/frontend/dist/itreport-front /usr/share/nginx/html

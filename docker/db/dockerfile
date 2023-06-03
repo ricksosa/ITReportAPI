@@ -1,0 +1,13 @@
+
+# Para generar script de migración (correr en terminal): 
+# dotnet ef migrations script --idempotent --output "docker/db/script.sql" 
+
+# SQL Server Image
+FROM mysql
+
+COPY ./docker/db/scripts/1_schema.sql /docker-entrypoint-initdb.d
+COPY ./docker/db/scripts/2_login.sql /docker-entrypoint-initdb.d
+
+# COPY ./create-db.sql .
+# RUN sqlcmd -i create-db.sql 
+
