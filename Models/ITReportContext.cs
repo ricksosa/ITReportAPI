@@ -6,7 +6,7 @@ namespace ITReportAPI.Models
 {
     public class ITReportContext : DbContext
     {
-        private const string connectionString = "server=localhost;port=1433;database=ITReportDB;user=sa;password=yourStrong_Password";
+        private const string connectionString = "server=localhost;port=1433;database=master;user=sa;password=yourStrong_Password";
         public ITReportContext(DbContextOptions<ITReportContext> options)
             : base(options)
         {
