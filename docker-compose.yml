@@ -23,4 +23,5 @@ services:
         MYSQL_ROOT_PASSWORD: example
         MYSQL_DATABASE: ITReportDB 
 
+# docker buildx build -t ricsos98/it-report-db --file ./docker/db/dockerfile --platform=linux/amd64,linux/arm64 --push .
     
